@@ -1,0 +1,111 @@
+source length=86 bangs=4 cap=8 radius=1.0 growth=1.5
+[bot 0 gen 0] enters at index 0 radius=1.00 side=open synced=False (root)
+[bot 0] reads 'd' @ 1 r=1.00
+[bot 0] reads 'e' @ 2 r=1.00
+[bot 0] reads 'f' @ 3 r=1.00
+[bot 0] reads '·' @ 4 r=1.00
+[bot 0] reads 'g' @ 5 r=1.00
+[bot 0] reads 'r' @ 6 r=1.00
+[bot 0] reads 'e' @ 7 r=1.00
+[bot 0] reads 'e' @ 8 r=1.00
+[bot 0] reads 't' @ 9 r=1.00
+[bot 0] reads '(' @ 10 r=1.00
+[bot 0] reads ')' @ 11 r=1.00
+[bot 0] reads ':' @ 12 r=1.00
+[bot 0] reads '·' @ 14 r=1.00
+[bot 0] reads '·' @ 15 r=1.00
+[bot 0] reads '·' @ 16 r=1.00
+[bot 0] reads '·' @ 17 r=1.00
+[bot 0] reads 'p' @ 18 r=1.00
+[bot 0] reads 'r' @ 19 r=1.00
+[bot 0] reads 'i' @ 20 r=1.00
+[bot 0] reads 'n' @ 21 r=1.00
+[bot 0] reads 't' @ 22 r=1.00
+[bot 0] reads '(' @ 23 r=1.00
+[bot 0] reads '"' @ 24 r=1.00
+[bot 0] reads 'h' @ 25 r=1.00
+[bot 0] reads 'e' @ 26 r=1.00
+[bot 0] reads 'l' @ 27 r=1.00
+[bot 0] reads 'l' @ 28 r=1.00
+[bot 0] reads 'o' @ 29 r=1.00
+[bot 0] HITS '!' @ 30 near 'print("hello!'. leaves.
+[bot 0] spawns bot 1. crease radius 1.00 -> 1.50
+[bot 0] folds across crease @ 30. child starts on the folded side at 31
+[bot 0] folds again across crease @ 30. radius holds at 1.50
+[bot 0] syncs with bot 1: radius=1.50 folds=2 crease=30
+[bot 1 gen 1] enters at index 31 radius=1.50 side=folded x2 synced=True (parent 0)
+[bot 1] reads '"' @ 31 r=1.50
+[bot 1] reads ')' @ 32 r=1.50
+[bot 1] reads '·' @ 34 r=1.50
+[bot 1] reads '·' @ 35 r=1.50
+[bot 1] reads '·' @ 36 r=1.50
+[bot 1] reads '·' @ 37 r=1.50
+[bot 1] reads 'i' @ 38 r=1.50
+[bot 1] reads 'f' @ 39 r=1.50
+[bot 1] reads '·' @ 40 r=1.50
+[bot 1] reads 'r' @ 41 r=1.50
+[bot 1] reads 'e' @ 42 r=1.50
+[bot 1] reads 'a' @ 43 r=1.50
+[bot 1] reads 'd' @ 44 r=1.50
+[bot 1] reads 'y' @ 45 r=1.50
+[bot 1] HITS '!' @ 46 near '    if ready!'. leaves.
+[bot 1] spawns bot 2. crease radius 1.50 -> 2.25
+[bot 1] folds across crease @ 46. child starts on the folded side at 47
+[bot 1] folds again across crease @ 46. radius holds at 2.25
+[bot 1] syncs with bot 2: radius=2.25 folds=2 crease=46
+[bot 2 gen 2] enters at index 47 radius=2.25 side=folded x2 synced=True (parent 1)
+[bot 2] reads ':' @ 47 r=2.25
+[bot 2] reads '·' @ 49 r=2.25
+[bot 2] reads '·' @ 50 r=2.25
+[bot 2] reads '·' @ 51 r=2.25
+[bot 2] reads '·' @ 52 r=2.25
+[bot 2] reads '·' @ 53 r=2.25
+[bot 2] reads '·' @ 54 r=2.25
+[bot 2] reads '·' @ 55 r=2.25
+[bot 2] reads '·' @ 56 r=2.25
+[bot 2] reads 'l' @ 57 r=2.25
+[bot 2] reads 'a' @ 58 r=2.25
+[bot 2] reads 'u' @ 59 r=2.25
+[bot 2] reads 'n' @ 60 r=2.25
+[bot 2] reads 'c' @ 61 r=2.25
+[bot 2] reads 'h' @ 62 r=2.25
+[bot 2] HITS '!' @ 63 near '      launch!'. leaves.
+[bot 2] spawns bot 3. crease radius 2.25 -> 3.38
+[bot 2] folds across crease @ 63. child starts on the folded side at 64
+[bot 2] folds again across crease @ 63. radius holds at 3.38
+[bot 2] syncs with bot 3: radius=3.38 folds=2 crease=63
+[bot 3 gen 3] enters at index 64 radius=3.38 side=folded x2 synced=True (parent 2)
+[bot 3] reads '(' @ 64 r=3.38
+[bot 3] reads ')' @ 65 r=3.38
+[bot 3] reads '·' @ 67 r=3.38
+[bot 3] reads '·' @ 68 r=3.38
+[bot 3] reads '·' @ 69 r=3.38
+[bot 3] reads '·' @ 70 r=3.38
+[bot 3] reads 'r' @ 71 r=3.38
+[bot 3] reads 'e' @ 72 r=3.38
+[bot 3] reads 't' @ 73 r=3.38
+[bot 3] reads 'u' @ 74 r=3.38
+[bot 3] reads 'r' @ 75 r=3.38
+[bot 3] reads 'n' @ 76 r=3.38
+[bot 3] reads '·' @ 77 r=3.38
+[bot 3] reads '"' @ 78 r=3.38
+[bot 3] reads 'd' @ 79 r=3.38
+[bot 3] reads 'o' @ 80 r=3.38
+[bot 3] reads 'n' @ 81 r=3.38
+[bot 3] reads 'e' @ 82 r=3.38
+[bot 3] HITS '!' @ 83 near 'return "done!'. leaves.
+[bot 3] spawns bot 4. crease radius 3.38 -> 5.06
+[bot 3] folds across crease @ 83. child starts on the folded side at 84
+[bot 3] folds again across crease @ 83. radius holds at 5.06
+[bot 3] syncs with bot 4: radius=5.06 folds=2 crease=83
+[bot 4 gen 4] enters at index 84 radius=5.06 side=folded x2 synced=True (parent 3)
+[bot 4] reads '"' @ 84 r=5.06
+[bot 4] reaches end. no more bangs. stops.
+
+--- lineage ---
+bot 0 gen 0 parent=None radius=1.50 folded=True folds=2 synced=True crease_at=30 left_at=30 children=1
+bot 1 gen 1 parent=0 radius=2.25 folded=True folds=2 synced=True crease_at=46 left_at=46 children=2
+bot 2 gen 2 parent=1 radius=3.38 folded=True folds=2 synced=True crease_at=63 left_at=63 children=3
+bot 3 gen 3 parent=2 radius=5.06 folded=True folds=2 synced=True crease_at=83 left_at=83 children=4
+bot 4 gen 4 parent=3 radius=5.06 folded=True folds=2 synced=True crease_at=83 left_at=None children=none
+bots formed: 5
