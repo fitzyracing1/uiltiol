@@ -232,3 +232,16 @@ def test_script_runs_as_a_subprocess() -> None:
         check=True,
     )
     assert result.stdout == (DATA / "default_output.txt").read_text(encoding="utf-8")
+
+
+def test_readme_demo_matches_a_real_run() -> None:
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "bang_bot.py"), str(ROOT / "examples" / "bangs.txt")],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+        check=True,
+    )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert f"$ bang-bot examples/bangs.txt\n{result.stdout}```" in readme
