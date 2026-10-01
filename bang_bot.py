@@ -4,6 +4,9 @@
 On each '!' the current bot leaves, spawns a child, increases the crease
 radius, folds, folds again across the same crease, then syncs the child
 radius and crease back onto the parent record.
+
+Bots run one after another in a flat loop (no recursion), so a source with
+thousands of bangs and a high --max-gen does not hit Python's recursion limit.
 """
 
 from __future__ import annotations
@@ -14,14 +17,15 @@ import sys
 import time
 from dataclasses import dataclass, field
 
+__version__ = "0.1.0"
 
-DEFAULT_SOURCE = '''
+DEFAULT_SOURCE = """
 def greet():
     print("hello!")
     if ready!:
         launch!()
     return "done!"
-'''
+"""
 
 
 @dataclass
@@ -43,7 +47,13 @@ class Bot:
     left_at: int | None = None
     alive: bool = True
 
-    def run(self, registry: dict[int, "Bot"], next_id: list[int]) -> None:
+    def run(self, registry: dict[int, Bot], next_id: list[int]) -> Bot | None:
+        """Walk the source from ``start_index``.
+
+        Returns the child bot to run next if this bot spawned one on a ``!``,
+        otherwise ``None``. The caller drives the chain; bots never call each
+        other, so the stack depth stays constant however many bangs there are.
+        """
         i = self.start_index
         n = len(self.source)
         side = f"folded x{self.fold_count}" if self.folded else "open"
@@ -56,38 +66,32 @@ class Bot:
         while i < n and self.alive:
             ch = self.source[i]
             if ch == "!":
-                self.leave_spawn_increase_fold(i, registry, next_id)
-                return
+                return self.leave_spawn_increase_fold(i, registry, next_id)
             if ch not in "\n\r":
                 shown = ch if ch.strip() else "\u00b7"
-                print(
-                    f"[bot {self.bot_id}] reads '{shown}' @ {i} "
-                    f"r={self.radius:.2f}"
-                )
+                print(f"[bot {self.bot_id}] reads '{shown}' @ {i} r={self.radius:.2f}")
             if self.delay:
                 time.sleep(self.delay)
             i += 1
         print(f"[bot {self.bot_id}] reaches end. no more bangs. stops.")
+        return None
 
     def leave_spawn_increase_fold(
         self,
         bang_index: int,
-        registry: dict[int, "Bot"],
+        registry: dict[int, Bot],
         next_id: list[int],
-    ) -> None:
+    ) -> Bot | None:
         self.alive = False
         self.left_at = bang_index
         self.crease_at = bang_index
         snippet = self.source[max(0, bang_index - 12) : bang_index + 1]
-        print(
-            f"[bot {self.bot_id}] HITS '!' @ {bang_index} near {snippet!r}. leaves."
-        )
+        print(f"[bot {self.bot_id}] HITS '!' @ {bang_index} near {snippet!r}. leaves.")
         if self.generation >= self.max_generation:
             print(
-                f"[bot {self.bot_id}] generation cap {self.max_generation} "
-                f"reached. does not spawn."
+                f"[bot {self.bot_id}] generation cap {self.max_generation} reached. does not spawn."
             )
-            return
+            return None
 
         child_id = next_id[0]
         next_id[0] += 1
@@ -121,9 +125,9 @@ class Bot:
         self.children.append(child_id)
         registry[child_id] = child
         self.sync(child)
-        child.run(registry, next_id)
+        return child
 
-    def sync(self, child: "Bot") -> None:
+    def sync(self, child: Bot) -> None:
         self.radius = child.radius
         self.crease_at = child.crease_at
         self.fold_count = child.fold_count
@@ -137,6 +141,7 @@ class Bot:
 
 
 def count_bangs(source: str) -> int:
+    """Return the number of ``!`` characters in ``source``."""
     return source.count("!")
 
 
@@ -147,6 +152,7 @@ def run(
     radius: float,
     growth: float,
 ) -> dict[int, Bot]:
+    """Run the root bot and every bot it spawns; return them keyed by id."""
     registry: dict[int, Bot] = {}
     next_id = [1]
     root = Bot(
@@ -165,11 +171,14 @@ def run(
         f"source length={len(source)} bangs={count_bangs(source)} "
         f"cap={max_generation} radius={radius} growth={growth}"
     )
-    root.run(registry, next_id)
+    bot: Bot | None = root
+    while bot is not None:
+        bot = bot.run(registry, next_id)
     return registry
 
 
 def report(registry: dict[int, Bot]) -> None:
+    """Print one lineage line per bot, in id order."""
     print("\n--- lineage ---")
     for bot_id in sorted(registry):
         bot = registry[bot_id]
@@ -185,28 +194,42 @@ def report(registry: dict[int, Bot]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Leave, spawn, increase radius, fold, fold again, sync."
+        prog="bang-bot",
+        description="Leave, spawn, increase radius, fold, fold again, sync.",
     )
-    parser.add_argument("path", nargs="?", help="file to walk")
+    parser.add_argument("path", nargs="?", help="file to walk (default: a built-in sample)")
     parser.add_argument("--self", action="store_true", help="walk this script")
-    parser.add_argument("--max-gen", type=int, default=8)
-    parser.add_argument("--delay", type=float, default=0.0)
+    parser.add_argument(
+        "--max-gen",
+        type=int,
+        default=8,
+        help="generation cap; bots at the cap do not spawn (default: 8)",
+    )
+    parser.add_argument(
+        "--delay",
+        type=float,
+        default=0.0,
+        help="seconds to sleep after each character (default: 0)",
+    )
     parser.add_argument("--radius", type=float, default=1.0, help="starting crease radius")
     parser.add_argument("--growth", type=float, default=1.5, help="radius multiplier on each spawn")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = parser.parse_args(argv)
 
-    if args.self:
-        with open(os.path.abspath(__file__), encoding="utf-8") as handle:
-            source = handle.read()
-    elif args.path:
-        with open(args.path, encoding="utf-8") as handle:
-            source = handle.read()
+    if args.max_gen < 0 or args.radius <= 0 or args.growth <= 0 or args.delay < 0:
+        print("max-gen >= 0, radius > 0, growth > 0, delay >= 0", file=sys.stderr)
+        return 2
+
+    path = os.path.abspath(__file__) if args.self else args.path
+    if path:
+        try:
+            with open(path, encoding="utf-8") as handle:
+                source = handle.read()
+        except (OSError, UnicodeDecodeError) as exc:
+            print(f"bang-bot: cannot read {path}: {exc}", file=sys.stderr)
+            return 2
     else:
         source = DEFAULT_SOURCE
-
-    if args.max_gen < 0 or args.radius <= 0 or args.growth <= 0:
-        print("max-gen >= 0, radius > 0, growth > 0", file=sys.stderr)
-        return 2
 
     registry = run(source, args.max_gen, args.delay, args.radius, args.growth)
     report(registry)
