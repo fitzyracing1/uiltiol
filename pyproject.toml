@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uiltiol"
+version = "0.1.0"
+description = "A tiny text toy: a 'bot' walks a file character by character and hands off to a new bot on every '!'."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Joshua Almeida" }]
+requires-python = ">=3.9"
+dependencies = []
+keywords = ["toy", "cli", "text", "simulation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Games/Entertainment",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.5"]
+
+[project.urls]
+Homepage = "https://github.com/fitzyracing1/uiltiol"
+Issues = "https://github.com/fitzyracing1/uiltiol/issues"
+
+[project.scripts]
+bang-bot = "bang_bot:main"
+
+[tool.setuptools]
+py-modules = ["bang_bot"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "EXE"]
