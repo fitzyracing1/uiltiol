@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -227,6 +228,7 @@ def test_script_runs_as_a_subprocess() -> None:
         capture_output=True,
         text=True,
         encoding="utf-8",
+        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
         check=True,
     )
     assert result.stdout == (DATA / "default_output.txt").read_text(encoding="utf-8")
