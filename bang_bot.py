@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""bang_bot.py — leave, spawn, increase radius, then fold.
+"""bang_bot.py — leave, spawn, increase radius, fold, fold again, sync.
 
-Walks source one character at a time. On each '!' the current bot leaves,
-spawns a child, increases the crease radius, then folds the remaining walk
-across that crease. The child continues on the folded side.
+On each '!' the current bot leaves, spawns a child, increases the crease
+radius, folds, folds again across the same crease, then syncs the child
+radius and crease back onto the parent record.
 """
 
 from __future__ import annotations
@@ -36,6 +36,8 @@ class Bot:
     radius: float = 1.0
     growth: float = 1.5
     folded: bool = False
+    fold_count: int = 0
+    synced: bool = False
     crease_at: int | None = None
     children: list[int] = field(default_factory=list)
     left_at: int | None = None
@@ -44,10 +46,11 @@ class Bot:
     def run(self, registry: dict[int, "Bot"], next_id: list[int]) -> None:
         i = self.start_index
         n = len(self.source)
-        side = "folded" if self.folded else "open"
+        side = f"folded x{self.fold_count}" if self.folded else "open"
         print(
             f"[bot {self.bot_id} gen {self.generation}] "
-            f"enters at index {i} radius={self.radius:.2f} side={side}"
+            f"enters at index {i} radius={self.radius:.2f} side={side} "
+            f"synced={self.synced}"
             + (f" (parent {self.parent_id})" if self.parent_id is not None else " (root)")
         )
         while i < n and self.alive:
@@ -97,6 +100,10 @@ class Bot:
             f"[bot {self.bot_id}] folds across crease @ {bang_index}. "
             f"child starts on the folded side at {bang_index + 1}"
         )
+        print(
+            f"[bot {self.bot_id}] folds again across crease @ {bang_index}. "
+            f"radius holds at {new_radius:.2f}"
+        )
         child = Bot(
             bot_id=child_id,
             generation=self.generation + 1,
@@ -108,11 +115,25 @@ class Bot:
             radius=new_radius,
             growth=self.growth,
             folded=True,
+            fold_count=2,
             crease_at=bang_index,
         )
         self.children.append(child_id)
         registry[child_id] = child
+        self.sync(child)
         child.run(registry, next_id)
+
+    def sync(self, child: "Bot") -> None:
+        self.radius = child.radius
+        self.crease_at = child.crease_at
+        self.fold_count = child.fold_count
+        self.folded = child.folded
+        self.synced = True
+        child.synced = True
+        print(
+            f"[bot {self.bot_id}] syncs with bot {child.bot_id}: "
+            f"radius={self.radius:.2f} folds={self.fold_count} crease={self.crease_at}"
+        )
 
 
 def count_bangs(source: str) -> int:
@@ -156,15 +177,15 @@ def report(registry: dict[int, Bot]) -> None:
         print(
             f"bot {bot.bot_id} gen {bot.generation} "
             f"parent={bot.parent_id} radius={bot.radius:.2f} "
-            f"folded={bot.folded} crease_at={bot.crease_at} "
-            f"left_at={bot.left_at} children={kids}"
+            f"folded={bot.folded} folds={bot.fold_count} synced={bot.synced} "
+            f"crease_at={bot.crease_at} left_at={bot.left_at} children={kids}"
         )
     print(f"bots formed: {len(registry)}")
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Leave, spawn, increase radius, then fold on every '!'."
+        description="Leave, spawn, increase radius, fold, fold again, sync."
     )
     parser.add_argument("path", nargs="?", help="file to walk")
     parser.add_argument("--self", action="store_true", help="walk this script")
