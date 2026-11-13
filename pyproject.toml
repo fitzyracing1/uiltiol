@@ -28,6 +28,7 @@ dev = ["pytest>=7", "ruff>=0.5"]
 [project.urls]
 Homepage = "https://github.com/fitzyracing1/uiltiol"
 Issues = "https://github.com/fitzyracing1/uiltiol/issues"
+Funding = "https://github.com/sponsors/fitzyracing1"
 
 [project.scripts]
 bang-bot = "bang_bot:main"
